@@ -5,8 +5,9 @@
   "version": "1.0.0",
 
   "permissions": [
-    "scripting",
-    "activeTab"
+    "activeTab",
+    "tabs",
+    "scripting"
   ],
 
   "host_permissions": [
@@ -14,7 +15,8 @@
   ],
 
   "background": {
-    "service_worker": "background/background.js"
+    "service_worker": "background/background.js",
+    "type": "module"
   },
 
   "action": {
@@ -25,7 +27,11 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content/content_script.js"]
+      "js": [
+        "gestures/scroll.js",
+        "content/content_script.js"
+      ],
+      "run_at": "document_idle"
     }
   ]
 }

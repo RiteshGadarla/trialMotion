@@ -1,12 +1,12 @@
-// extension/gestures/scroll.js
+// Medium-smooth scroll handler — exposed globally as handleScroll
+function handleScroll(data) {
+    const amount = data?.amount ?? 0;
+    console.log("[trailMotion] handleScroll amount:", amount);
 
-export function handleScroll(data) {
-    const amount = data.amount || 0;
-
-    // Medium smooth scroll effect using window.scrollBy
     window.scrollBy({
         top: amount,
-        left: 0,
         behavior: "smooth"
     });
 }
+
+window.handleScroll = handleScroll;
