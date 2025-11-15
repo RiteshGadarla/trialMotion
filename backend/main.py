@@ -18,6 +18,8 @@ from core.event_sender import EventSender
 from core.gesture_loop import GestureLoop
 
 
+# backend/main.py
+
 async def main():
     print("[trailMotion] Backend starting...")
 
@@ -25,11 +27,36 @@ async def main():
     sender = EventSender()
 
     loop = GestureLoop(state, sender)
+
+    # --- DEFINE TASKS ---
     gesture_task = asyncio.create_task(loop.start())
+    # Now we capture the returned websocket task
+    ws_task = start_ws_server(state, sender)
 
-    start_ws_server(state, sender)
+    # --- WAIT FOR EITHER TASK TO FINISH ---
+    try:
+        # Wait for the FIRST task to complete (e.g., gesture_loop closing via ESC)
+        done, pending = await asyncio.wait(
+            [gesture_task, ws_task],
+            return_when=asyncio.FIRST_COMPLETED
+        )
 
-    await gesture_task
+        # --- CLEANUP ---
+        print("[trailMotion] Shutting down...")
+
+        # Stop the gesture loop (in case it wasn't the one that stopped)
+        loop.stop()
+
+        # Cancel all other pending tasks (i.e., the websocket server)
+        for task in pending:
+            task.cancel()
+
+    except asyncio.CancelledError:
+        print("[trailMotion] Main task cancelled.")
+    finally:
+        # Ensure the loop resources are released
+        if loop.running:
+            loop.stop()
 
 
 if __name__ == "__main__":

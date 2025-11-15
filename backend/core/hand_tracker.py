@@ -10,6 +10,7 @@ This module:
 import mediapipe as mp
 import cv2
 
+
 class HandTracker:
     def __init__(self, max_hands=1, detection_conf=0.6, tracking_conf=0.6):
         self.max_hands = max_hands
@@ -22,17 +23,19 @@ class HandTracker:
             min_tracking_confidence=tracking_conf
         )
 
+        # backend/core/hand_tracker.py
+
     def get_landmarks(self, frame):
         """
         Input:
             frame (BGR image from OpenCV)
 
         Output:
-            list of (x, y, z) normalized landmark tuples OR None
+            (list of (x, y, z) tuples OR None, mp_results object)
         """
 
         if frame is None:
-            return None
+            return None, None  # Return two Nones
 
         # Convert BGR -> RGB
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -42,7 +45,7 @@ class HandTracker:
 
         # No hands detected
         if not results.multi_hand_landmarks:
-            return None
+            return None, results  # Return None for landmarks, but results for drawing
 
         # Only use first detected hand (for now)
         hand = results.multi_hand_landmarks[0]
@@ -52,4 +55,4 @@ class HandTracker:
         for lm in hand.landmark:
             landmarks.append((lm.x, lm.y, lm.z))
 
-        return landmarks
+        return landmarks, results  # Return both

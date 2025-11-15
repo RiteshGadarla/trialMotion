@@ -6,6 +6,7 @@ WS_PORT = 8765
 
 clients = set()
 
+
 async def handler(websocket, state_manager):
     """Handle messages from a connected browser client."""
     clients.add(websocket)
@@ -28,7 +29,6 @@ async def handler(websocket, state_manager):
 
 
 def start_ws_server(state_manager, event_sender):
-
     async def broadcast(message: dict):
         """Send message to all connected clients."""
         dead = []
@@ -52,10 +52,12 @@ def start_ws_server(state_manager, event_sender):
             await handler(websocket, state_manager)
 
         async with websockets.serve(
-            wrapper,
-            "127.0.0.1",
-            WS_PORT
+                wrapper,
+                "127.0.0.1",
+                WS_PORT
         ):
             await asyncio.Future()  # run forever
 
-    asyncio.create_task(ws_main())
+        await asyncio.Future()  # run forever
+
+    return asyncio.create_task(ws_main())
