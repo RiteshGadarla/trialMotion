@@ -299,17 +299,3 @@ extension/gestures/zoom.js
 Dispatcher auto-recognizes and routes.
 
 ---
-
-# 🏁 **Current Roadmap**
-
-* [x] Folder structure
-* [x] Backend skeleton
-* [x] Hand tracking
-* [ ] Gesture processing loop
-* [ ] Scroll gesture
-* [ ] Tests
-* [ ] Frontend WebSocket handler
-* [ ] Frontend gesture mapping
-* [ ] Beta release
-
----
